@@ -781,13 +781,7 @@ import { ModalService } from "./modal.service";
     {
       provide: ConfigService,
       useClass: ConfigService,
-      deps: [
-        StateServiceAbstraction,
-        ConfigApiServiceAbstraction,
-        AuthServiceAbstraction,
-        EnvironmentService,
-        LogService,
-      ],
+      deps: [ConfigApiServiceAbstraction, EnvironmentService, LogService, StateProvider],
     },
     {
       provide: ConfigServiceAbstraction,
