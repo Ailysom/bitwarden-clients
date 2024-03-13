@@ -140,15 +140,16 @@ export class ConfigService implements ConfigServiceAbstraction {
     apiUrl: string,
   ): Promise<void> {
     try {
-      const response = await this.configApiService.get();
+      const response = await this.configApiService.get(userId);
       const newConfig = new ServerConfig(new ServerConfigData(response));
-      await this.environmentService.setCloudRegion(newConfig?.environment?.cloudRegion);
       if (userId == null) {
         // update global state with new pulled config
         await this.stateProvider.getGlobal(GLOBAL_SERVER_CONFIGURATIONS).update((configs) => {
           return { ...configs, [apiUrl]: newConfig };
         });
       } else {
+        // TODO MDG: this should be set for both global and user
+        await this.environmentService.setCloudRegion(newConfig?.environment?.cloudRegion);
         // update state with new pulled config
         await this.stateProvider.setUserState(USER_SERVER_CONFIG, newConfig, userId);
       }
