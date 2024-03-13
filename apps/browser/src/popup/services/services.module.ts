@@ -21,7 +21,6 @@ import { EventCollectionService } from "@bitwarden/common/abstractions/event/eve
 import { EventUploadService } from "@bitwarden/common/abstractions/event/event-upload.service";
 import { NotificationsService } from "@bitwarden/common/abstractions/notifications.service";
 import { SearchService as SearchServiceAbstraction } from "@bitwarden/common/abstractions/search.service";
-import { SettingsService } from "@bitwarden/common/abstractions/settings.service";
 import { VaultTimeoutSettingsService } from "@bitwarden/common/abstractions/vault-timeout/vault-timeout-settings.service";
 import { VaultTimeoutService } from "@bitwarden/common/abstractions/vault-timeout/vault-timeout.service";
 import { OrganizationService } from "@bitwarden/common/admin-console/abstractions/organization/organization.service.abstraction";
@@ -42,6 +41,10 @@ import {
   AutofillSettingsService,
   AutofillSettingsServiceAbstraction,
 } from "@bitwarden/common/autofill/services/autofill-settings.service";
+import {
+  DefaultDomainSettingsService,
+  DomainSettingsService,
+} from "@bitwarden/common/autofill/services/domain-settings.service";
 import {
   UserNotificationSettingsService,
   UserNotificationSettingsServiceAbstraction,
@@ -118,7 +121,6 @@ import { ForegroundPlatformUtilsService } from "../../platform/services/platform
 import { ForegroundDerivedStateProvider } from "../../platform/state/foreground-derived-state.provider";
 import { ForegroundMemoryStorageService } from "../../platform/storage/foreground-memory-storage.service";
 import { BrowserSendService } from "../../services/browser-send.service";
-import { BrowserSettingsService } from "../../services/browser-settings.service";
 import { FilePopoutUtilsService } from "../../tools/popup/services/file-popout-utils.service";
 import { VaultFilterService } from "../../vault/services/vault-filter.service";
 
@@ -348,11 +350,9 @@ function getBgService<T>(service: keyof MainBackground) {
     },
     { provide: SyncService, useFactory: getBgService<SyncService>("syncService"), deps: [] },
     {
-      provide: SettingsService,
-      useFactory: (stateService: StateServiceAbstraction) => {
-        return new BrowserSettingsService(stateService);
-      },
-      deps: [StateServiceAbstraction],
+      provide: DomainSettingsService,
+      useClass: DefaultDomainSettingsService,
+      deps: [StateProvider],
     },
     {
       provide: AbstractStorageService,
